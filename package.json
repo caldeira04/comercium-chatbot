@@ -1,0 +1,16 @@
+{
+  "name": "comercium-chatbot",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "workspaces": ["frontend/*", "backend/*"],
+  "scripts": {
+      "dev": "bun run --cwd frontend dev & bun run --cwd backend dev"
+  }
+}
