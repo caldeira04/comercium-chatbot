@@ -1,15 +1,16 @@
 # Elysia with Bun runtime
 
-## Getting Started
-To get started with this template, simply paste this command into your terminal:
-```bash
-bun create elysia ./elysia-example
-```
-
 ## Development
 To start the development server run:
 ```bash
 bun run dev
+```
+
+## env
+copiar .env.example e preencher as variáveis
+```
+DB_FILE= # exemplo, pode ser qualquer coisa
+OPENROUTER_API_KEY= # sua chave de api do openrouter
 ```
 
 Open http://localhost:3000/ with your browser to see the result.
