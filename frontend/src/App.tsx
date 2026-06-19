@@ -18,7 +18,7 @@ type ChatResponse = {
 
 function MarkdownContent({ value }: { value: string }) {
     return (
-        <div className="markdown-content">
+        <div>
             <ReactMarkdown
                 components={{
                     a: (props) => (
@@ -41,21 +41,22 @@ function MarkdownContent({ value }: { value: string }) {
 
 function Message({ content }: { content: MessageType }) {
     return (
-        <article className="message-card">
-            <div className="message-row message-row-user">
-                <span className="message-label">Você</span>
+        <article className="flex flex-col gap-2">
+            <div className="bg-muted self-end px-4 py-2 rounded-xl min-w-2/3 max-w-2/3">
                 <MarkdownContent value={content.prompt} />
             </div>
 
-            <div className="message-row message-row-bot">
-                <span className="message-label">Comercium</span>
+            <div className="bg-muted/20 self-start px-4 py-2 rounded-xl min-w-2/3 max-w-2/3">
+                <p className="font-bold">Market Guy</p>
                 <MarkdownContent value={content.response} />
             </div>
 
             {content.reasoningDetails && (
-                <details className="reasoning-details">
-                    <summary>Ver raciocínio</summary>
-                    <MarkdownContent value={content.reasoningDetails} />
+                <details className="min-w-2/3 max-w-2/3">
+                    <summary className="font-bold">Ver raciocínio</summary>
+                    <div className="bg-muted rounded-lg px-4 py-2 text-muted-foreground mb-2">
+                        <MarkdownContent value={content.reasoningDetails} />
+                    </div>
                 </details>
             )}
         </article>
@@ -118,16 +119,15 @@ function App() {
     }
 
     return (
-        <main className="chat-shell">
-            <section className="chat-hero" aria-labelledby="chat-title">
-                <span className="eyebrow">Assistente inteligente</span>
-                <h1 id="chat-title">Comercium Chatbot</h1>
+        <main className="w-1/2 h-screen flex flex-col mx-auto mt-6 top-6 sticky">
+            <section className="text-center flex flex-col gap-4">
+                <h1 className="font-bold text-6xl uppercase">Comercium</h1>
                 <p>
-                    Tire dúvidas comerciais com respostas claras, rápidas e organizadas.
+                    tem alguma dúvida sobre como usar o sistema? deixe o Market Guy te ajudar!
                 </p>
             </section>
 
-            <section className="messages-panel" aria-live="polite">
+            <section className="mt-6 overflow-scroll flex-1 flex flex-col">
                 {messages.length > 0 ? (
                     messages.map((message, index) => (
                         <Message content={message} key={`${message.prompt}-${index}`} />
@@ -141,7 +141,7 @@ function App() {
             </section>
 
             <form
-                className="prompt-composer"
+                className="flex items-center justify-center w-full h-24 sticky gap-4 mb-6"
                 onSubmit={(event) => {
                     event.preventDefault();
                     handlePrompt();
@@ -152,16 +152,17 @@ function App() {
                     placeholder="digite sua dúvida aqui..."
                     maxLength={2000}
                     onChange={(e) => setInput(e.target.value)}
-                    aria-label="Digite sua dúvida"
+                    className="w-full bg-muted rounded-xl px-4 py-2"
                 />
                 <button
+                    className={`${loading || !input.trim() ? "bg-muted-foreground/50 cursor-not-allowed" : ""} cursor-pointer bg-black px-4 py-2 rounded-full text-white`}
                     type="submit"
                     disabled={loading || !input.trim()}
                 >
-                    {loading ? "enviando..." : "enviar"}
+                    &gt;
                 </button>
             </form>
-        </main>
+        </main >
     );
 }
 
