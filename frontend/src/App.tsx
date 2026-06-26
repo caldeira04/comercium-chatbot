@@ -47,7 +47,7 @@ function Message({ content }: { content: MessageType }) {
             </div>
 
             <div className="bg-muted/20 self-start px-4 py-2 rounded-xl min-w-2/3 max-w-2/3">
-                <p className="font-bold">Market Guy</p>
+                <p className="font-bold text-xl">Market Guy</p>
                 <MarkdownContent value={content.response} />
             </div>
 
@@ -123,19 +123,26 @@ function App() {
             <section className="text-center flex flex-col gap-4">
                 <h1 className="font-bold text-6xl uppercase">Comercium</h1>
                 <p>
-                    tem alguma dúvida sobre como usar o sistema? deixe o Market Guy te ajudar!
+                    tem alguma dúvida sobre como usar o sistema? deixe o Market
+                    Guy te ajudar!
                 </p>
             </section>
 
             <section className="mt-6 overflow-scroll flex-1 flex flex-col">
                 {messages.length > 0 ? (
                     messages.map((message, index) => (
-                        <Message content={message} key={`${message.prompt}-${index}`} />
+                        <Message
+                            content={message}
+                            key={`${message.prompt}-${index}`}
+                        />
                     ))
                 ) : (
                     <div className="empty-state">
                         <span>Comece uma conversa</span>
-                        <p>Digite sua dúvida abaixo para receber a primeira resposta.</p>
+                        <p>
+                            Digite sua dúvida abaixo para receber a primeira
+                            resposta.
+                        </p>
                     </div>
                 )}
             </section>
@@ -162,7 +169,7 @@ function App() {
                     &gt;
                 </button>
             </form>
-        </main >
+        </main>
     );
 }
 

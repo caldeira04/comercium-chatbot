@@ -2,22 +2,10 @@ import { Elysia, t } from "elysia";
 import { systemPrompt } from "../utils/general";
 import { db } from "../db/db";
 import { message } from "../db/schema";
-import { desc } from "drizzle-orm";
+import { embed } from "../utils/embeddings";
+import { retrieveRelevantChunks } from "../utils/knowledge";
 
 const apiKey = process.env.OPENROUTER_API_KEY;
-
-type Message = {
-    role: string;
-    content: string;
-    reasoning_details?: string | null;
-};
-
-const content: Message[] = [
-    {
-        role: "system",
-        content: systemPrompt,
-    },
-];
 
 export const llm = new Elysia({ prefix: "/llm" })
     .get("/chat", async () => {
@@ -44,21 +32,6 @@ export const llm = new Elysia({ prefix: "/llm" })
         "/chat",
         async ({ body }) => {
             const { input } = body;
-            const history = await db.query.message.findFirst({
-                columns: {
-                    createdAt: true,
-                    response: true,
-                    reasoningDetails: true,
-                },
-                orderBy: [desc(message.createdAt)],
-            });
-
-            if (history)
-                content.push({
-                    role: "assistant",
-                    content: history.response,
-                    reasoning_details: history.reasoningDetails,
-                });
 
             if (!input)
                 return {
@@ -66,12 +39,25 @@ export const llm = new Elysia({ prefix: "/llm" })
                     error: "You must provide a prompt",
                 };
 
-            content.push({
-                role: "user",
-                content: input,
-            });
+            const queryEmbedding = await embed(input);
+            const relevantChunks = await retrieveRelevantChunks(queryEmbedding, 5);
 
-            let response: any = await fetch(
+            const context = relevantChunks
+                .map((c) => c.content)
+                .join("\n\n---\n\n");
+
+            const messages = [
+                {
+                    role: "system",
+                    content: `${systemPrompt}\n\n# Contexto\n\n${context}`,
+                },
+                {
+                    role: "user",
+                    content: input,
+                },
+            ];
+
+            const llmResponse = await fetch(
                 "https://openrouter.ai/api/v1/chat/completions",
                 {
                     method: "POST",
@@ -81,27 +67,35 @@ export const llm = new Elysia({ prefix: "/llm" })
                     },
                     body: JSON.stringify({
                         model: "openai/gpt-oss-120b:free",
-                        messages: content,
+                        messages,
                     }),
                 },
             );
 
-            const result = await response.json();
+            const result = await llmResponse.json();
 
-            response = {
+            if (!result.choices || !result.choices[0]) {
+                console.error("OpenRouter error:", JSON.stringify(result, null, 2));
+                return {
+                    status: 502,
+                    error: result.error?.message || "LLM service returned an error",
+                };
+            }
+
+            const reply = {
                 message: result.choices[0].message.content,
                 reasoningDetails: result.choices[0].message.reasoning,
             };
 
             await db.insert(message).values({
                 prompt: input,
-                response: response.message,
-                reasoningDetails: response.reasoningDetails,
+                response: reply.message,
+                reasoningDetails: reply.reasoningDetails,
             });
 
             return {
                 status: 200,
-                response,
+                response: reply,
             };
         },
         {

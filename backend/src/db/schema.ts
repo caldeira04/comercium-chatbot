@@ -10,3 +10,13 @@ export const message = sqliteTable("message", {
     reasoningDetails: text("reasoning_details"),
     createdAt: text("created_at").default(sql`(CURRENT_TIMESTAMP)`),
 });
+
+export const knowledgeChunk = sqliteTable("knowledge_chunk", {
+    id: text("id")
+        .primaryKey()
+        .$default(() => crypto.randomUUID()),
+    content: text("content").notNull(),
+    embedding: text("embedding").notNull(),
+    sourceFile: text("source_file").notNull(),
+    createdAt: text("created_at").default(sql`(CURRENT_TIMESTAMP)`),
+});
