@@ -1,5 +1,5 @@
-const apiKey = process.env.OPENROUTER_API_KEY;
-const embeddingModel = process.env.OPENROUTER_EMBEDDING_MODEL;
+const apiKey = process.env.OPENROUTER_API_KEY!;
+const embeddingModel = process.env.OPENROUTER_EMBEDDING_MODEL!;
 
 export async function embed(text: string): Promise<number[]> {
     const response = await fetch(
@@ -17,7 +17,19 @@ export async function embed(text: string): Promise<number[]> {
         },
     );
 
+    if (!response.ok) {
+        const errorBody = await response.text();
+        throw new Error(
+            `OpenRouter embeddings API error: ${response.status} ${response.statusText} - ${errorBody}`,
+        );
+    }
+
     const data = await response.json();
+    if (!data.data?.[0]?.embedding) {
+        throw new Error(
+            `Unexpected embeddings response structure: ${JSON.stringify(data)}`,
+        );
+    }
     return data.data[0].embedding;
 }
 

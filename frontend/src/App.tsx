@@ -84,6 +84,7 @@ function App() {
         if (!prompt) return;
 
         setLoading(true);
+        setInput("");
 
         try {
             const res = await fetch(API_URL, {
