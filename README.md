@@ -1,18 +1,20 @@
 # comercium-chatbot
 
-To install dependencies:
+Chatbot dedicado a servir como fonte primária de suporte ao Comercium, sistema ERP para gerenciamento de conveniências/varejo.
+Utiliza RAG, embeddings e um banco "vetorial" construído em SQLite comum.
+
+## Para instalar:
 
 ```bash
 bun install
 ```
 
-To run:
+## Para executar:
 
 ```bash
-bun run index.ts
+bun dev
 ```
 
-This project was created using `bun init` in bun v1.3.14. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+## Funcionamento:
 
-## To-do
-- [ ] add rate limits
+Abra [http://localhost:5173](http://localhost:5173) (porta padrão) no navegador, e realize perguntas.
