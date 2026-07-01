@@ -9,6 +9,23 @@ Utiliza RAG, embeddings e um banco "vetorial" construído em SQLite comum.
 bun install
 ```
 
+## Adicione suas chaves ao projeto
+
+```bash
+cd backend
+cp .env.example .env
+```
+
+E adicione as chaves com seu editor de texto favorito:
+
+```
+*backend/.env*
+
+OPENROUTER_API_KEY=
+OPENROUTER_EMBEDDING_MODEL=
+DB_FILE=
+```
+
 ## Para executar:
 
 ```bash
