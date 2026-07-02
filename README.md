@@ -22,8 +22,8 @@ E adicione as chaves com seu editor de texto favorito:
 *backend/.env*
 
 OPENROUTER_API_KEY=
-OPENROUTER_EMBEDDING_MODEL=
-DB_FILE=
+OPENROUTER_EMBEDDING_MODEL=text-embedding-3-small
+DB_FILE=history.sqlite
 ```
 
 ## Para executar:
